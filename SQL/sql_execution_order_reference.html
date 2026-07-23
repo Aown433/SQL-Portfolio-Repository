@@ -1,0 +1,135 @@
+
+<h2 class="sr-only">SQL Execution Order — Interactive Reference. Tap each step to see what you can and cannot use.</h2>
+<style>
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.card{display:flex;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--border-strong)}
+.card.open{border-color:var(--border-accent)}
+.num{width:28px;min-width:28px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted);font-weight:500;background:var(--surface-1);border-right:0.5px solid var(--border)}
+.bar{width:4px;min-width:4px}
+.inner{flex:1}
+.body{padding:9px 12px;background:var(--surface-2)}
+.kw{font-size:14px;font-weight:500;color:var(--text-primary);font-family:var(--font-mono)}
+.hint{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.detail{display:none;padding:9px 12px;border-top:0.5px solid var(--border);background:var(--surface-1);font-size:12px}
+.card.open .detail{display:block}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;margin:2px 2px 0 0}
+.yes{background:var(--bg-success);color:var(--text-success)}
+.no{background:var(--bg-danger);color:var(--text-danger)}
+.tip{font-size:11px;color:var(--text-secondary);margin-top:7px;padding-left:8px;border-left:2px solid var(--border-accent)}
+.ph{font-size:11px;color:var(--text-muted);letter-spacing:.4px;font-weight:500;margin:12px 0 4px;padding-left:4px}
+.mem{display:flex;align-items:flex-start;flex-direction:column;gap:4px;background:var(--surface-1);border:0.5px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px}
+</style>
+
+<div style="padding:1rem 0">
+  <div class="mem">
+    <span style="font-size:16px;font-weight:500;color:var(--text-accent);font-family:var(--font-mono);letter-spacing:2px">F — W — G — H — S — W — O — L</span>
+    <span style="font-size:12px;color:var(--text-secondary)">Furry Worms Go Home · Sometimes We Order Lunch</span>
+  </div>
+
+  <div class="ph">① Raw Data</div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">1</div><div class="bar" style="background:#378ADD"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">FROM</div><div class="hint">Table load hoti hai, JOINs</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Table columns</span>
+        <span class="tag yes">✅ JOINs / subqueries</span>
+        <div class="tip">Starting point — sab kuch yahan se aata hai</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">2</div><div class="bar" style="background:#378ADD"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">WHERE</div><div class="hint">Raw rows filter karna</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Column values</span>
+        <span class="tag no">❌ SELECT aliases</span>
+        <span class="tag no">❌ SUM / COUNT / AVG</span>
+        <div class="tip">WHERE SUM(amount) > 0 — galat! → HAVING use karo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph">② Grouping</div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">3</div><div class="bar" style="background:#1D9E75"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">GROUP BY</div><div class="hint">Rows ko groups mein todna</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Column names</span>
+        <span class="tag no">❌ SELECT aliases</span>
+        <span class="tag no">❌ Aggregate functions</span>
+        <div class="tip">Sirf real column names — aliases abhi bane nahi</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">4</div><div class="bar" style="background:#1D9E75"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">HAVING</div><div class="hint">Groups filter karna</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ SUM / COUNT / AVG</span>
+        <span class="tag yes">✅ Column names</span>
+        <span class="tag no">❌ SELECT aliases</span>
+        <div class="tip">WHERE aggregates nahi le sakta tha — HAVING le sakta hai</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph">③ Output</div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">5</div><div class="bar" style="background:#7F77DD"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">SELECT</div><div class="hint">Columns + aliases define hote hain yahan</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Columns, aggregates, expressions</span>
+        <span class="tag yes">✅ Aliases — pehli baar yahan bante hain</span>
+        <div class="tip">Isliye WHERE / GROUP BY / HAVING aliases nahi jaante the</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">6</div><div class="bar" style="background:#7F77DD"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">WINDOW (OVER)</div><div class="hint">Window functions — GROUP BY ke baad chalti hain</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Grouped result</span>
+        <span class="tag yes">✅ sum(sum(x)) — nested aggregates</span>
+        <div class="tip">GROUP BY already ho chuka → isliye SUM ke upar SUM chal sakta hai</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph">④ Final</div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">7</div><div class="bar" style="background:#BA7517"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">ORDER BY</div><div class="hint">Sort — SELECT aliases use ho sakte hain ✨</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Columns, aggregates</span>
+        <span class="tag yes">✅ SELECT aliases ← sirf yahan exception!</span>
+        <div class="tip">SELECT ke baad execute hota hai → aliases pata hain</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" onclick="this.classList.toggle('open')">
+    <div class="num">8</div><div class="bar" style="background:#BA7517"></div>
+    <div class="inner">
+      <div class="body"><div class="kw">LIMIT</div><div class="hint">Final rows cut karna</div></div>
+      <div class="detail">
+        <span class="tag yes">✅ Final sorted result</span>
+        <div class="tip">Sab kuch ho chuka — phir rows count limit hoti hain</div>
+      </div>
+    </div>
+  </div>
+</div>
